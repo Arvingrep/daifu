@@ -1,0 +1,9 @@
+FROM nginx:1.24.0
+
+# 拷贝 Nginx 配置文件
+COPY ./nginx/host.conf /etc/nginx/conf.d/web.conf
+
+# 拷贝网站文件
+COPY web /usr/share/nginx/html
+
+#docker build -t arvingrep/nginx:1.24.4 -f nginx-dockerfile . 

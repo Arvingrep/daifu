@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:1.24.0
+    container_name: nginx
+    #environment:
+    #  - DOMAIN=${DOMAIN}
+    volumes:
+      - ./nginx/host.conf:/etc/nginx/conf.d/web.conf #增加 {DOMAIN}
+      - ./web:/usr/share/nginx/html
+    ports:
+      - "80:80"
+    depends_on:
+      - app
+    networks:
+      - app_network
+
+  mysql:
+    image: mysql:8.0.30
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: Devops@2021
+      MYSQL_DATABASE: daifu
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin_password
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./doc/db.sql:/docker-entrypoint-initdb.d/db.sql
+    networks:
+      - app_network
+
+  app:
+    # build:
+    #   context: ./cmd
+    image: arvingrep/cmd:0.6
+    container_name: app
+    environment:
+      - PATH=/app/cmd
+    command: ["./cmd/main"]
+    depends_on:
+      - mysql
+    networks:
+      - app_network
+
+volumes:
+  mysql-data:
+
+networks:
+  app_network:
+
+#DOMAIN=test-pay.com docker-compose up 

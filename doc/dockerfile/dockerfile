@@ -1,0 +1,17 @@
+# 使用一个更小的镜像作为运行环境
+FROM alpine:3.18
+
+# 安装必要的系统依赖项（如果有）
+RUN apk --no-cache add ca-certificates  libc6-compat
+
+# 设置工作目录
+WORKDIR /app
+
+# 从构建阶段复制已编译的二进制文件
+COPY . .
+
+# 公开端口（根据您的应用程序需要）
+EXPOSE 8080
+
+# 启动应用程序
+CMD ["./cmd/main"]

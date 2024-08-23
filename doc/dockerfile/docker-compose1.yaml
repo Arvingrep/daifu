@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: arvingrep/nginx:1.24.4
+    container_name: nginx
+    # environment:
+    #  - DAMAIN=test-pay.com
+    ports:
+      - "801:80"
+    depends_on:
+      - app
+    networks:
+      - app_network
+
+  mysql:
+    image: arvingrep/mysql:8.0.30
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: Devops@2021
+      MYSQL_DATABASE: daifu
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin_password
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - app_network
+
+  app:
+    # build:
+    #   context: ./cmd
+    image: arvingrep/cmd:0.6
+    container_name: app
+    environment:
+      - PATH=/app/cmd
+    command: ["./cmd/main"]
+    depends_on:
+      - mysql
+    networks:
+      - app_network
+
+volumes:
+  mysql-data:
+
+networks:
+  app_network:
+
+#DOMAIN=test-pay.com docker-compose up 
